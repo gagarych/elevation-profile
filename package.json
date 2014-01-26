@@ -1,0 +1,32 @@
+{
+  "name": "elevation-profile",
+  "version": "0.0.0",
+  "description": "Elevation profile chart from KML file",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gagarych/elevation-profile.git"
+  },
+  "keywords": [
+    "kml",
+    "elevation",
+    "profile",
+    "gaziga",
+    "google",
+    "maps",
+    "d3"
+  ],
+  "author": "gagarin",
+  "license": "https://github.com/gagarych/elevation-profile/blob/master/LICENSE",
+  "bugs": {
+    "url": "https://github.com/gagarych/elevation-profile/issues"
+  },
+  "homepage": "https://github.com/gagarych/elevation-profile",
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "d3": "~3.4.1",
+    "less": "~1.6.1",
+    "grunt-contrib-copy": "~0.5.0",
+    "grunt-contrib-uglify": "~0.3.2",
+    "grunt-contrib-less": "~0.9.0"
+  }
+}
