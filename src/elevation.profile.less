@@ -1,14 +1,19 @@
-@font: 'Avenir Next', 'Century Gothic',sans-serif;
+@font: 'Avenir Next', 'Century Gothic', sans-serif;
 @highColor: desaturate(#993300, 5%);
-@lightColor: lighten(@color, 70%);
-@color: #333;
+@lightColor: lighten(@color, 30%);
+@color: #999;
 
 [data-item*='elevation-profile'] {
   font-family: @font;
   path {
     stroke: @highColor;
-    stroke-width: 2;
     fill: none;
+    stroke-width: 2;
+
+    &.area{
+      stroke-width: 0;
+      fill: @lightColor;
+    }
   }
 
   text {
@@ -25,11 +30,6 @@
     }
   }
 
-  .area {
-    fill: @lightColor;
-    stroke-width: 0;
-  }
-
   .overlay {
     fill: none;
     pointer-events: all;
@@ -39,7 +39,7 @@
     circle {
       fill: @lightColor;
       stroke: @highColor;
-      stroke-width: 2;
+      stroke-width: 1;
     }
 
     line {
