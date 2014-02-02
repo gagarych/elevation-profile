@@ -249,15 +249,17 @@ class ElevationProfile
     .on("touchstart", showFocus)
     .on("touchmove", touchmove)
 
+initChart = ($container) ->
+  d3.json($container.attr('data-src'), (err, json) ->
+    if (err)
+      console.warn(error)
+    else
+      opts = $container.attr('data-opts')
+      options = if opts then JSON.parse(opts) else {}
+      new ElevationProfile($container, json, options)
+  )
+
 for el in d3.selectAll("div[data-item='elevation-profile']")
   for container in el
-    $container = d3.select(container)
-    d3.json($container.attr('data-src'), (err, json) ->
-      if (err)
-        console.warn(error)
-      else
-        opts = $container.attr('data-opts')
-        options = if opts then JSON.parse(opts) else {}
-        new ElevationProfile($container, json, options)
-    )
+    initChart(d3.select(container))
 

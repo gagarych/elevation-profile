@@ -1,5 +1,5 @@
 (function() {
-  var $container, ElevationProfile, container, el, _i, _j, _len, _len1, _ref;
+  var ElevationProfile, container, el, initChart, _i, _j, _len, _len1, _ref;
 
   ElevationProfile = (function() {
     function ElevationProfile($container, data, options) {
@@ -244,22 +244,25 @@
 
   })();
 
+  initChart = function($container) {
+    return d3.json($container.attr('data-src'), function(err, json) {
+      var options, opts;
+      if (err) {
+        return console.warn(error);
+      } else {
+        opts = $container.attr('data-opts');
+        options = opts ? JSON.parse(opts) : {};
+        return new ElevationProfile($container, json, options);
+      }
+    });
+  };
+
   _ref = d3.selectAll("div[data-item='elevation-profile']");
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     el = _ref[_i];
     for (_j = 0, _len1 = el.length; _j < _len1; _j++) {
       container = el[_j];
-      $container = d3.select(container);
-      d3.json($container.attr('data-src'), function(err, json) {
-        var options, opts;
-        if (err) {
-          return console.warn(error);
-        } else {
-          opts = $container.attr('data-opts');
-          options = opts ? JSON.parse(opts) : {};
-          return new ElevationProfile($container, json, options);
-        }
-      });
+      initChart(d3.select(container));
     }
   }
 
