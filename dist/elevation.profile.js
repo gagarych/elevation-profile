@@ -3,7 +3,7 @@
 
   ElevationProfile = (function() {
     function ElevationProfile($container, data, options) {
-      var $area, $bin, $focus, $g, $gmap, $notes, $svg, centerPoint, d, dataByX, dist, drawGooglePath, findTextPlacement, gcoord, hideFocus, intersectRect, isValidPlacement, map, marker, measureText, mousemove, opts, place, placement, placements, point, pointsWithPlaces, probingLocations, putNote, setFocus, showFocus, touchmove, x, xAxis, xd, y, yAxis, yByX, yd, _i, _j, _len, _len1, _ref;
+      var $area, $bin, $focus, $g, $gmap, $notes, $svg, centerPoint, d, dataByX, dist, drawGooglePath, findTextPlacement, gcoord, hideFocus, intersectRect, isValidPlacement, map, marker, measureText, mousemove, notex2, opts, place, placement, placements, point, pointsWithPlaces, probingLocations, putNote, setFocus, showFocus, touchmove, x, xAxis, xd, y, yAxis, yByX, yd, _i, _j, _len, _len1, _ref;
       if (options == null) {
         options = {};
       }
@@ -67,6 +67,7 @@
         });
       };
       centerPoint = gcoord(data[data.length / 2].location);
+      $svg = $container.append("svg:svg").attr("width", opts.width).attr("height", opts.height);
       $gmap = $container.append("div").attr("class", "gmap").style("width", opts.width + "px").style("height", opts.height + "px");
       map = new google.maps.Map($gmap.node(), {
         zoom: opts.gMapZoomLevel,
@@ -79,7 +80,6 @@
         position: centerPoint,
         title: "walk"
       });
-      $svg = $container.append("svg:svg").attr("width", opts.width).attr("height", opts.height);
       $g = $svg.append("svg:g");
       xAxis = d3.svg.axis().scale(x).orient("bottom").ticks(10);
       yAxis = d3.svg.axis().scale(y).orient("left").ticks(10);
@@ -123,10 +123,15 @@
         return data[bisect(data, x.invert(xVal))];
       };
       yByX = function(xVal) {
+        var d;
         if (xVal < 0 || xVal > opts.width) {
           return 0;
         }
-        return y(dataByX(xVal).elevation);
+        d = dataByX(xVal);
+        if (d) {
+          return y(d.elevation);
+        }
+        return 0;
       };
       setFocus = function(d) {
         var loc;
@@ -149,6 +154,13 @@
       })();
       $notes = $g.append("g").attr("class", "notes");
       $bin = $svg.append("g").style("display", "none");
+      notex2 = function(placement) {
+        if (placement.x < placement.sx) {
+          return placement.x + placement.rect.width;
+        } else {
+          return placement.x;
+        }
+      };
       measureText = function(text) {
         var $el, rect;
         $el = $bin.append("text").text(text);
@@ -172,12 +184,17 @@
         return [loc(xVal - rect.width - offset, yVal - rect.height - offset), loc(xVal + offset, yVal - rect.height - offset), loc(xVal + offset, yVal + offset - rect.height - 5), loc(xVal - rect.width - offset, yVal + offset - rect.height - 5)];
       };
       intersectRect = function(p1, p2) {
-        return !(p2.x > p1.x + p1.rect.width || p2.x + p2.rect.width < p1.x || p2.y > p1.y + p1.rect.height || p2.y + p2.rect.height < p1.y);
+        var intersect;
+        intersect = !(p2.x > p1.x + p1.rect.width || p2.x + p2.rect.width < p1.x || p2.y > p1.y + p1.rect.height || p2.y + p2.rect.height + 10 < p1.y);
+        if (intersect) {
+          return intersect;
+        }
+        return (p1.sx < p2.sx) !== (notex2(p1) < notex2(p2));
       };
       placements = [];
       isValidPlacement = function(location, rect) {
         var i, p, _i, _j, _len, _ref, _ref1;
-        if (location.x < 0 || location.x + rect.width > opts.width) {
+        if (location.x < opts.padding || location.x + rect.width > opts.width) {
           return false;
         }
         for (_i = 0, _len = placements.length; _i < _len; _i++) {
@@ -196,7 +213,7 @@
       findTextPlacement = function(p, text, ignore) {
         var l, locations, offset, rect, _i, _len;
         rect = measureText(text);
-        offset = 25;
+        offset = 30;
         locations = probingLocations(p, rect, offset);
         for (_i = 0, _len = locations.length; _i < _len; _i++) {
           l = locations[_i];
@@ -210,7 +227,7 @@
         $notes.append("circle").attr("cx", placement.sx).attr("cy", placement.sy).attr("r", 1);
         $notes.append("text").attr("x", placement.x).attr("y", placement.y + placement.rect.height).text(place.name);
         $notes.append("line").attr("x1", placement.x).attr("x2", placement.x + placement.rect.width).attr("y1", placement.y + placement.rect.height + 5).attr("y2", placement.y + placement.rect.height + 5).style("text-anchor", "start");
-        return $notes.append("line").attr("x1", placement.sx).attr("y1", placement.sy).attr("x2", placement.x < placement.sx ? placement.x + placement.rect.width : placement.x).attr("y2", placement.y + placement.rect.height + 5);
+        return $notes.append("line").attr("x1", placement.sx).attr("y1", placement.sy).attr("x2", notex2(placement)).attr("y2", placement.y + placement.rect.height + 5);
       };
       for (_i = 0, _len = pointsWithPlaces.length; _i < _len; _i++) {
         point = pointsWithPlaces[_i];

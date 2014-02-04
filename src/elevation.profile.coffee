@@ -33,6 +33,9 @@ class ElevationProfile
         map: map});
 
     centerPoint = gcoord(data[data.length / 2].location)
+
+    $svg = $container.append("svg:svg") .attr("width", opts.width).attr("height", opts.height)
+
     $gmap = $container.append("div").attr("class", "gmap").style("width", opts.width + "px").style("height",
       opts.height + "px")
 
@@ -49,10 +52,6 @@ class ElevationProfile
       position: centerPoint,
       title: "walk"
     })
-
-    $svg = $container.append("svg:svg")
-    .attr("width", opts.width)
-    .attr("height", opts.height)
 
     $g = $svg.append("svg:g")
 
@@ -140,7 +139,9 @@ class ElevationProfile
 
     yByX = (xVal) ->
       return 0 if xVal < 0 || xVal > opts.width
-      return y(dataByX(xVal).elevation)
+      d = dataByX(xVal)
+      return y(d.elevation) if d
+      return 0
 
     setFocus = (d) ->
       $focus.attr("transform", "translate(" + x(d.distance) + ",0)")
@@ -153,6 +154,9 @@ class ElevationProfile
     pointsWithPlaces = (d for d in data when !!d['places'])
     $notes = $g.append("g").attr("class", "notes");
     $bin = $svg.append("g").style("display", "none");
+
+    notex2 = (placement) ->
+      if placement.x < placement.sx then placement.x + placement.rect.width else placement.x
 
     measureText = (text) ->
       $el = $bin.append("text").text(text)
@@ -173,22 +177,25 @@ class ElevationProfile
       ]
 
     intersectRect = (p1, p2) ->
-      return !(p2.x > p1.x + p1.rect.width ||
+      intersect = !(p2.x > p1.x + p1.rect.width ||
       p2.x + p2.rect.width < p1.x ||
       p2.y > p1.y + p1.rect.height ||
-      p2.y + p2.rect.height < p1.y)
+      p2.y + p2.rect.height + 10 < p1.y)
+      return intersect if intersect
+      return (p1.sx < p2.sx) != (notex2(p1) < notex2(p2))
 
     placements = []
 
     isValidPlacement = (location, rect) ->
-      return false if location.x < 0 || location.x + rect.width > opts.width
+      return false if location.x < opts.padding || location.x + rect.width > opts.width
       return false for p in placements when intersectRect(p, location)
       return false for i in [-10..rect.width + 10] when location.y - 5 < yByX(location.x + i) < location.y + rect.height + 5
+
       return true
 
     findTextPlacement = (p, text, ignore) ->
       rect = measureText(text)
-      offset = 25
+      offset = 30
       locations = probingLocations(p, rect, offset)
       return l for l in locations when isValidPlacement(l, rect)
       return null
@@ -214,7 +221,7 @@ class ElevationProfile
       $notes.append("line")
       .attr("x1", placement.sx)
       .attr("y1", placement.sy)
-      .attr("x2", if placement.x < placement.sx then placement.x + placement.rect.width else placement.x)
+      .attr("x2", notex2(placement))
       .attr("y2", placement.y + placement.rect.height + 5)
 
 
