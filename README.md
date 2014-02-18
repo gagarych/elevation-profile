@@ -7,15 +7,11 @@ Live example in my blog [here](http://gaziga.com/himalayan-trails/)
 ##Usage
 
 1. Load elevation data for path from kml file   
-```sh
-bundle exec ruby kml_converter.rb input.kml output.json
-```   
+`bundle exec ruby kml_converter.rb input.kml output.json`   
 kml file must contain one route and place marks along the route ([sample kml](http://gaziga.com/himalayan-trails/tilicho_ru.kml))
 
 2. Add tag and scripts to your page   
-```html
-<div data-item="elevation-profile" data-src="output.json" data-opts='{"extraElevation": 500}'></div>
-```   
+`<div data-item="elevation-profile" data-src="output.json" data-opts='{"extraElevation": 500}'></div>`  
 examples: [here](https://github.com/gagarych/elevation-profile/blob/master/example.html) and [there](http://gaziga.com/himalayan-trails/)
 
 ##Options
