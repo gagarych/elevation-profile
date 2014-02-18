@@ -153,7 +153,7 @@
         return _results;
       })();
       $notes = $g.append("g").attr("class", "notes");
-      $bin = $svg.append("g").style("display", "none");
+      $bin = $svg.append("g");
       notex2 = function(placement) {
         if (placement.x < placement.sx) {
           return placement.x + placement.rect.width;

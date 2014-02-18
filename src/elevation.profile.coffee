@@ -153,7 +153,7 @@ class ElevationProfile
 
     pointsWithPlaces = (d for d in data when !!d['places'])
     $notes = $g.append("g").attr("class", "notes");
-    $bin = $svg.append("g").style("display", "none");
+    $bin = $svg.append("g");
 
     notex2 = (placement) ->
       if placement.x < placement.sx then placement.x + placement.rect.width else placement.x
