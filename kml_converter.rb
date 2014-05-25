@@ -9,13 +9,15 @@ class KmlConverter
     return JSON.parse(RestClient.get('http://maps.googleapis.com/maps/api/elevation/json', {:params => params}))
   end
 
-  def get_elevations_path(path)
+  def get_elevations_path(path, total_dist)
+    part_dist = calc_distance path
     pathParam = path.map { |l| "#{l[1]},#{l[0]}" }.join('|')
-    return request_elevation({:path => pathParam, :samples => 300})
+    return request_elevation({:path => pathParam, :samples => (500 * part_dist / total_dist).ceil})
   end
 
   def get_elevations(path)
-    path.each_slice(40).map { |s| get_elevations_path(s)["results"] }.flatten(1)
+    total_dist = calc_distance path
+    path.each_slice(40).map { |s| get_elevations_path(s, total_dist)["results"] }.flatten(1)
   end
 
 
@@ -67,14 +69,17 @@ class KmlConverter
 
   def calc_distance(path)
     prev = nil
+    prev_dist = 0
     path.each do |p|
       if prev.nil?
-        p['distance'] = 0
+        p['distance'] = 0 unless p.kind_of?(Array)
       else
-        p['distance'] = prev['distance'] + dist(prev, p)
+        prev_dist = prev_dist + dist(prev, p)
+        p['distance'] = prev_dist unless p.kind_of?(Array)
       end
       prev = p
     end
+    prev_dist
   end
 
   def process(kml)
@@ -82,8 +87,12 @@ class KmlConverter
   end
 
   def to_coord(path_el)
-    loc = path_el["location"]
-    [loc['lat'], loc['lng']]
+    if path_el.kind_of?(Array)
+      [path_el[0], path_el[1]]
+    else
+      loc = path_el["location"]
+      [loc['lat'], loc['lng']]
+    end
   end
 end
 

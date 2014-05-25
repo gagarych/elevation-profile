@@ -3,8 +3,14 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-less'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-watch'
+  grunt.loadNpmTasks 'grunt-contrib-concat'
 
   grunt.initConfig
+    concat:
+      dist:
+        src: ['lib/spin.min.js', 'dist/elevation.profile.js']
+        dest: 'dist/elevation.profile.js'
+
     uglify:
       dist:
         files:
@@ -22,10 +28,10 @@ module.exports = (grunt) ->
         options:
           sourceMap: true
         files:
-          'dist/elevation.profile.js': 'src/elevation.profile.coffee'
+          'dist/elevation.profile.js': ['src/elevation.profile.coffee']
     watch:
       dist:
         files: ['src/*.js', 'src/*.less'],
         tasks: ['dist']
 
-  grunt.registerTask 'dist', ['coffee', 'less', 'uglify']
+  grunt.registerTask 'dist', ['coffee', 'less', 'concat', 'uglify']
