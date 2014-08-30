@@ -6,3 +6,7 @@ src/*.js
 src/*.css
 dist/*.js.map
 
+
+Gruntfile.js
+
+/examples/

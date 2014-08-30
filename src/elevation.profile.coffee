@@ -40,8 +40,9 @@ class ElevationProfile
       opts.height + "px")
 
     map = new google.maps.Map($gmap.node(), {
-      zoom: opts.gMapZoomLevel,
-      center: centerPoint,
+      zoom: opts.gMapZoomLevel
+      center: centerPoint
+      scrollwheel: false
       mapTypeId: 'terrain'
     })
 

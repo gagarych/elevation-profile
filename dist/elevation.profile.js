@@ -74,6 +74,7 @@
       map = new google.maps.Map($gmap.node(), {
         zoom: opts.gMapZoomLevel,
         center: centerPoint,
+        scrollwheel: false,
         mapTypeId: 'terrain'
       });
       drawGooglePath(6, '#fff');

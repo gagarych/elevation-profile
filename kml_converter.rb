@@ -96,4 +96,5 @@ class KmlConverter
   end
 end
 
+ARGV[1] = "#{ File.basename(ARGV[0], '.kml') }.json" unless ARGV[1]
 File.write(ARGV[1], KmlConverter.new.process(ARGV[0]))
