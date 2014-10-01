@@ -1,0 +1,25 @@
+{
+  "name": "elevation-profile",
+  "version": "0.0.0",
+  "homepage": "https://github.com/gagarych/elevation-profile",
+  "authors": [
+    "gagarin <gagarych@gmail.com>"
+  ],
+  "description": "Elevation profile visualization from kml file",
+  "main": "dist/elevation.profile.min.js",
+  "keywords": [
+    "elevation",
+    "profile",
+    "gps",
+    "kml",
+    "chart"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
