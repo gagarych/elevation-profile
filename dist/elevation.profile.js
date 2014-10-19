@@ -4,7 +4,7 @@
   var ElevationProfile, container, el, initChart, _i, _j, _len, _len1, _ref;
 
   ElevationProfile = (function() {
-    function ElevationProfile($container, data, options) {
+    ElevationProfile.prototype.draw = function($container, data, options) {
       var $area, $bin, $focus, $g, $gmap, $notes, $svg, centerPoint, d, dataByX, dist, drawGooglePath, findTextPlacement, gcoord, hideFocus, intersectRect, isValidPlacement, map, marker, measureText, mousemove, notex2, opts, place, placement, placements, point, pointsWithPlaces, probingLocations, putNote, setFocus, showFocus, touchmove, x, xAxis, xd, y, yAxis, yByX, yd, _i, _j, _len, _len1, _ref;
       if (options == null) {
         options = {};
@@ -13,9 +13,7 @@
       if (opts.height == null) {
         opts.height = 400;
       }
-      if (opts.width == null) {
-        opts.width = $container.node().offsetWidth;
-      }
+      opts.width = $container.node().offsetWidth;
       if (opts.padding == null) {
         opts.padding = 40;
       }
@@ -69,6 +67,7 @@
         });
       };
       centerPoint = gcoord(data[Math.floor(data.length / 2)].location);
+      $container.selectAll("*").remove();
       $svg = $container.append("svg:svg").attr("width", opts.width).attr("height", opts.height);
       $gmap = $container.append("div").attr("class", "gmap").style("width", opts.width + "px").style("height", opts.height + "px");
       map = new google.maps.Map($gmap.node(), {
@@ -257,7 +256,19 @@
       touchmove = function() {
         return setFocus(dataByX(d3.touches(this)[0][0]));
       };
-      $g.append("rect").attr("class", "overlay").attr("width", opts.width).attr("height", opts.height - opts.padding).attr("dx", opts.padding).attr("dy", opts.padding).on("mouseover", showFocus).on("mouseout", hideFocus).on("mousemove", mousemove).on("touchstart", showFocus).on("touchmove", touchmove);
+      return $g.append("rect").attr("class", "overlay").attr("width", opts.width).attr("height", opts.height - opts.padding).attr("dx", opts.padding).attr("dy", opts.padding).on("mouseover", showFocus).on("mouseout", hideFocus).on("mousemove", mousemove).on("touchstart", showFocus).on("touchmove", touchmove);
+    };
+
+    function ElevationProfile($container, data, options) {
+      var _self;
+      if (options == null) {
+        options = {};
+      }
+      this.draw($container, data, options);
+      _self = this;
+      d3.select(window).on('resize', function() {
+        return _self.draw($container, data, options);
+      });
     }
 
     return ElevationProfile;

@@ -1,8 +1,8 @@
 class ElevationProfile
-  constructor: ($container, data, options = {}) ->
+  draw: ($container, data, options = {}) ->
     opts = options
     opts.height ?= 400
-    opts.width ?= $container.node().offsetWidth
+    opts.width = $container.node().offsetWidth
     opts.padding ?= 40
     opts.baseElevation ?= 1500
     opts.extraElevation ?= 500
@@ -33,8 +33,8 @@ class ElevationProfile
         map: map});
 
     centerPoint = gcoord(data[data.length // 2].location)
-
-    $svg = $container.append("svg:svg") .attr("width", opts.width).attr("height", opts.height)
+    $container.selectAll("*").remove()
+    $svg = $container.append("svg:svg").attr("width", opts.width).attr("height", opts.height)
 
     $gmap = $container.append("div").attr("class", "gmap").style("width", opts.width + "px").style("height",
       opts.height + "px")
@@ -256,6 +256,13 @@ class ElevationProfile
     .on("mousemove", mousemove)
     .on("touchstart", showFocus)
     .on("touchmove", touchmove)
+
+  constructor: ($container, data, options = {}) ->
+   this.draw($container, data, options)
+   _self = this
+
+   d3.select(window).on('resize', ->
+    _self.draw($container, data, options));
 
 initChart = ($container) ->
 
