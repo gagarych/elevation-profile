@@ -1,5 +1,9 @@
 class ElevationProfile
-  draw: ($container, data, options = {}) ->
+  draw: ->
+    $container = this.$container
+    data = this.data
+    options = this.options
+
     opts = options
     opts.height ?= 400
     opts.width = $container.node().offsetWidth
@@ -33,7 +37,7 @@ class ElevationProfile
         map: map});
 
     centerPoint = gcoord(data[data.length // 2].location)
-    $container.selectAll("*").remove()
+    $container.html("")
     $svg = $container.append("svg:svg").attr("width", opts.width).attr("height", opts.height)
 
     $gmap = $container.append("div").attr("class", "gmap").style("width", opts.width + "px").style("height",
@@ -258,14 +262,14 @@ class ElevationProfile
     .on("touchmove", touchmove)
 
   constructor: ($container, data, options = {}) ->
-   this.draw($container, data, options)
-   _self = this
+    this.$container = $container
+    this.data = data
+    this.options = options
+    this.draw()
 
-   d3.select(window).on('resize', ->
-    _self.draw($container, data, options));
+_charts = []
 
 initChart = ($container) ->
-
   opts =
     lines: 13 # The number of lines to draw
     length: 20 # The length of each line
@@ -293,10 +297,16 @@ initChart = ($container) ->
     else
       opts = $container.attr('data-opts')
       options = if opts then JSON.parse(opts) else {}
-      new ElevationProfile($container, json, options)
+      _charts.push(new ElevationProfile($container, json, options))
   )
 
 for el in d3.selectAll("div[data-item='elevation-profile']")
   for container in el
     initChart(d3.select(container))
+
+d3.select(window).on('resize', ->
+  for chart in _charts
+    chart.draw()
+)
+
 

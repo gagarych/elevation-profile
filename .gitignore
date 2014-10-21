@@ -9,6 +9,4 @@ dist/*.js.map
 
 Gruntfile.js
 
-/examples/
-
 /src/bower_components/
