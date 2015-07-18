@@ -34,16 +34,18 @@ class KmlConverter
     points = []
 
     places.each do |place|
-      coords = place.css('Point').text.split(/[,\n]/).map(&:strip).reject(&:empty?);
-
+      coords = place.css('Point').text.split(/[,\n]/).map(&:strip).reject(&:empty?).reject{|e| e == '1'};
+     # p place.css('Point').text.split(/[,\n]/).map(&:strip).reject(&:empty?);
       points << {
           'location' => {
-              'lat' => coords[2].to_f,
-              'lng' => coords[1].to_f
+              'lat' => coords[1].to_f,
+              'lng' => coords[0].to_f
           },
           'name' => place.css('name').text,
           'features' => place.css('description').text.gsub('features:', '').strip.split(',').map(&:strip)
       }
+
+
     end
     points.each { |p| settle_point(path, p) }
     path
@@ -59,8 +61,13 @@ class KmlConverter
         cur_node_dist = distance
       end
     end
-    cur_node['places'] = [] if !cur_node.has_key?('places')
-    cur_node['places'] << p
+    coord = to_coord(cur_node)
+
+    path.select{|node| to_coord(node) == coord }.each do |node|
+      node['places'] = [] if !node.has_key?('places')
+      node['places'] << p
+    end
+
   end
 
   def dist(p1, p2)
